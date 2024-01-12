@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+</head>
+<body>
+    <h2>Welcome to the Admin Panel!</h2>
+    <ul>
+        <li><a href="{{ url_for('admin_create_user') }}">Create User</a></li>
+        <li><a href="{{ url_for('admin_list_users') }}">List Users</a></li>
+        <li><a href="{{ url_for('admin_update_user') }}">Update User</a></li>
+        <li><a href="{{ url_for('admin_delete_user') }}">Delete User</a></li>
+    </ul>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>

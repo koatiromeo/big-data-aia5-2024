@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User</title>
+</head>
+<body>
+    <h2>Create User</h2>
+    <form method="POST" action="{{ url_for('admin_create_user') }}">
+        {{ form.csrf_token }}
+        <label for="{{ form.username.id }}">Username:</label>
+        {{ form.username }}
+        {% if form.username.errors %}
+            <p style="color: red;">{{ form.username.errors[0] }}</p>
+        {% endif %}
+        <br>
+        <label for="{{ form.password.id }}">Password:</label>
+        {{ form.password }}
+        {% if form.password.errors %}
+            <p style="color: red;">{{ form.password.errors[0] }}</p>
+        {% endif %}
+        <br>
+        <input type="submit" value="Create User">
+    </form>
+</body>
+</html>

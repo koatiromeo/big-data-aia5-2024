@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Manager Panel</title>
+
+        <!-- Prevent the demo from appearing in search engines -->
+        <meta name="robots"
+              content="noindex">
+
+        <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CRoboto:400,500%7CExo+2:600&amp;display=swap"
+              rel="stylesheet">
+
+        <!-- Preloader -->
+        <link type="text/css"
+              href="{{ url_for('static', filename='public/vendor/spinkit.css') }}"
+              rel="stylesheet">
+
+        <!-- Perfect Scrollbar -->
+        <link type="text/css"
+              href="{{ url_for('static', filename='public/vendor/perfect-scrollbar.css') }}"
+              rel="stylesheet">
+
+        <!-- Material Design Icons -->
+        <link type="text/css"
+              href="{{ url_for('static', filename='public/css/material-icons.css') }}"
+              rel="stylesheet">
+
+
+        <!-- Preloader -->
+        <link type="text/css"
+              href="{{ url_for('static', filename='public/css/preloader.css') }}"
+              rel="stylesheet">
+
+        <!-- App CSS -->
+        <link type="text/css"
+              href="{{ url_for('static', filename='public/css/app.css') }}"
+              rel="stylesheet">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='crud/css/dataTables.bootstrap4.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='crud/css/responsive.bootstrap4.min.css') }}">
+    </head>
+
+    <body class="layout-app ">
+
+        <div class="preloader">
+            <div class="sk-chase">
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+            </div>
+        </div>
+
+        <!-- Drawer Layout -->
+
+        <div class="mdk-drawer-layout js-mdk-drawer-layout"
+             data-push
+             data-responsive-width="992px">
+            <div class="mdk-drawer-layout__content page-content">
+
+                <!-- Header -->
+
+                <div class="navbar navbar-expand navbar-light border-bottom-2"
+                     id="default-navbar"
+                     data-primary>
+
+                    <!-- Navbar toggler -->
+                    <button class="navbar-toggler w-auto mr-16pt d-block d-lg-none rounded-0"
+                            type="button"
+                            data-toggle="sidebar">
+                        <span class="material-icons">short_text</span>
+                    </button>
+
+                    <!-- Navbar Brand -->
+                    <a href="{{ url_for('manager_panel') }}"
+                       class="navbar-brand mr-16pt d-lg-none">
+                        <span class="avatar avatar-sm navbar-brand-icon mr-0 mr-lg-8pt">
+
+                            <span class="avatar-title rounded bg-primary"><img src="{{ url_for('static', filename='public/images/illustration/student/128/white.svg') }}"
+                                     alt="logo"
+                                     class="img-fluid" /></span>
+
+                        </span>
+
+                        <span class="d-none d-lg-block">Manager Panel</span>
+                    </a>
+
+                    <ul class="nav navbar-nav d-none d-sm-flex flex justify-content-start ml-8pt">
+                        <li class="nav-item active">
+                            <a href="{{ url_for('manager_panel') }}"
+                               class="nav-link">CRUD CNIS</a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav navbar-nav ml-auto mr-0">
+                        <li class="nav-item">
+                            <a href="{{ url_for('logout') }}"
+                               class="btn btn-outline-dark">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+
+
+                <div class="jumbotron p-1 rounded-0 mb-2">
+                    <div class="text-center">
+                        <h1>AJOUT, SUPPRESSION ET MISE A JOUR DES CNIS</h1>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <button class="btn btn-sm btn-primary mb-2" onclick="ajouter()"><i class="material-icons">add</i></button>
+                    <div id="mensagem"></div>
+                    <table id="tabela" class="table table-striped table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th class="all">ID CNIS</th>
+                                <th class="all">NOM</th>
+                                <th class="min-desktop">PRENOM</th>
+                                <th class="min-desktop">DATE NAISSANCE</th>
+                                <th class="min-desktop">LIEU NAISSANCE</th>
+                                <th class="min-desktop">SEXE</th>
+                                <th class="min-desktop">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>ID CNIS</th>
+                                <th>NOM</th>
+                                <th>PRENOM</th>
+                                <th>DATE NAISSANCE</th>
+                                <th>LIEU NAISSANCE</th>
+                                <th>SEXE</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                
+                    <div id="modal-form" class="modal fade" role="dialog" data-backdrop="static">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header"></div>
+                                <div class="modal-body">
+                                    <form id='form' method="post" enctype="multipart/form-data">
+                                        <div class="form-group">
+                                            <label for="carte_id">NUMERO CNI</label>
+                                            <input class="form-control" type="text" id="carte_id" name="carte_id" placeholder="Ex.: 127456890">
+                                       </div>
+                                        <div class="form-group">
+                                            <label for="nom">NOM</label>
+                                            <input class="form-control" type="text" id="nom" name="nom">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="prenom">PRENOM</label>
+                                            <input class="form-control" type="text" id="prenom" name="prenom">
+                                       </div>
+                                        <div class="form-group">
+                                            <label for="date_naissance">DATE DE NAISSANCE</label>
+                                            <input class="form-control" type="text" id="date_naissance" name="date_naissance" placeholder="Ex.: JJ/MM/AAAA">
+                                       </div>
+                                        <div class="form-group">
+                                            <label for="lieu_naissance">LIEU DE NAISSANCE</label>
+                                            <input class="form-control" type="text" id="lieu_naissance" name="lieu_naissance">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="profession">PROFESSION</label>
+                                            <input class="form-control" type="text" id="profession" name="profession">
+                                       </div>
+                                        <div class="form-group">
+                                            <label for="image_blob_1">IMAGE 1</label>
+                                            <input type="file" name="image_blob_1" id="image_blob_1">
+                                       </div>
+                                        <div class="form-group">
+                                            <label for="image_blob_1">IMAGE 2</label>
+                                            <input type="file" name="image_blob_2" id="image_blob_2">
+                                       </div>
+                                        <div class="form-group">
+                                            <label for="image_blob_1">IMAGE 3</label>
+                                            <input type="file" name="image_blob_3" id="image_blob_3">
+                                       </div>
+                                        <div class="form-group">
+                                            <label for="image_blob_1">IMAGE 4</label>
+                                            <input type="file" name="image_blob_4" id="image_blob_4">
+                                       </div>
+                                        <button type="submit" class="btn btn-sm btn-primary"></button>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="closeForm()">ANNULER</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div id="modal" class="modal fade" role="dialog" data-backdrop="static">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header"></div>
+                                <div class="modal-footer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- Footer -->
+
+                <div class="bg-white border-top-2 mt-auto">
+                    <div class="container page__container page-section d-flex flex-column">
+                        <p class="text-70 brand mb-24pt">
+                            <img class="brand-icon"
+                                 src="{{ url_for('static', filename='public/images/logo/black-70@2x.png') }}"
+                                 width="30"
+                                 alt="Luma"> Luma
+                            </p>
+                        <p class="measure-lead-max text-50 small mr-8pt">Luma is a beautifully crafted user interface for modern Education Platforms, including Courses & Tutorials, Video Lessons, Student and Teacher Dashboard, Curriculum Management, Earnings and Reporting, ERP, HR, CMS, Tasks, Projects, eCommerce and more.</p>
+                        <p class="mb-8pt d-flex">
+                            <a href="#"
+                               class="text-70 text-underline mr-8pt small">Terms</a>
+                            <a href="#"
+                               class="text-70 text-underline small">Privacy policy</a>
+                        </p>
+                        <p class="text-50 small mt-n1 mb-0">Copyright 2019 &copy; All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="mdk-drawer js-mdk-drawer"
+                 id="default-drawer">
+                <div class="mdk-drawer__content">
+                    <div class="sidebar sidebar-dark-pickled-bluewood sidebar-left"
+                         data-perfect-scrollbar>
+                        <a href="index.html"
+                           class="sidebar-brand ">
+                            <span class="avatar avatar-xl sidebar-brand-icon h-auto">
+
+                                <span class="avatar-title rounded bg-primary"><img src="{{ url_for('static', filename='public/images/illustration/student/128/white.svg') }}"
+                                         class="img-fluid"
+                                         alt="logo" /></span>
+
+                            </span>
+
+                            <span>Manager Panel</span>
+                        </a>
+
+                        <div class="sidebar-heading">Manager Options</div>
+                        <ul class="sidebar-menu">
+
+                            <li class="sidebar-menu-item active">
+                                <a class="sidebar-menu-button"
+                                   href="{{ url_for('manager_panel') }}">
+                                    <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">home</span>
+                                    <span class="sidebar-menu-text">CRUD CNIS</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item">
+                                <a class="sidebar-menu-button"
+                                   href="courses.html">
+                                    <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">local_library</span>
+                                    <span class="sidebar-menu-text">FACE DECTECTION</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item">
+                                <a class="sidebar-menu-button"
+                                   href="paths.html">
+                                    <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">style</span>
+                                    <span class="sidebar-menu-text">FACE MATCHING</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item">
+                                <a class="sidebar-menu-button"
+                                   href="student-dashboard.html">
+                                    <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">account_box</span>
+                                    <span class="sidebar-menu-text">LICENCE DETECTION</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item">
+                                <a class="sidebar-menu-button"
+                                   href="student-my-courses.html">
+                                    <span class="material-icons sidebar-menu-icon sidebar-menu-icon--left">search</span>
+                                    <span class="sidebar-menu-text">LICENCE EXTRACTION</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- jQuery -->
+        <script src="{{ url_for('static', filename='public/vendor/jquery.min.js') }}"></script>
+
+        <!-- Bootstrap -->
+        <script src="{{ url_for('static', filename='public/vendor/popper.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='public/vendor/bootstrap.min.js') }}"></script>
+
+        <!-- Perfect Scrollbar -->
+        <script src="{{ url_for('static', filename='public/vendor/perfect-scrollbar.min.js') }}"></script>
+
+        <!-- DOM Factory -->
+        <script src="{{ url_for('static', filename='public/vendor/dom-factory.js') }}"></script>
+
+        <!-- MDK -->
+        <script src="{{ url_for('static', filename='public/vendor/material-design-kit.js') }}"></script>
+
+        <!-- App JS -->
+        <script src="{{ url_for('static', filename='public/js/app.js') }}"></script>
+
+        <!-- Preloader -->
+        <script src="{{ url_for('static', filename='public/js/preloader.js') }}"></script>
+
+        <script src="{{ url_for('static', filename='crud/js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='crud/js/dataTables.bootstrap4.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='crud/js/dataTables.responsive.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='crud/js/jquery.mask.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='crud/js/jquery.validate.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='crud/js/additional-methods.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='crud/js/messages_pt_BR.js') }}"></script>
+
+        <script>
+            $('#cpf').mask('000.000.000-00')
+        
+            $('#form').validate({
+                rules: {
+                    nome: {
+                        required:true,
+                        maxlength:40,
+                        minlength:4,
+                        minWords:2
+                    },
+                    cpf: {
+                        required:true,
+                        cpfBR:true
+                    }
+                },
+                errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            })
+        
+            const tabela = $('#tabela').DataTable( {
+                "responsive": true,
+                "autoWidth": false,
+                "columnDefs": [{
+                "targets": [ 0, 1, 2, 3],
+                "orderable": false
+                }],
+                "order": [[ 0, "desc" ]],
+                "ajax": {
+                    "method": "GET",
+                    "url": `/list/cnis`,
+                },
+                "columns": [
+                    {"data":"id"},
+                    {"data":"nom"},
+                    {"data":"prenom"},
+                    {"data":"date_naissance"},
+                    {"data":"lieu_naissance"},
+                    {"data":"sexe"},
+                    {"data":"actions"},
+
+                ],
+                "lengthMenu": [[5, 10, 15], [5, 10, 15]],
+                "pagingType": "full_numbers",
+                "language":
+                {
+                    "emptyTable": "Aucune donnée disponible dans le tableau",
+                    "loadingRecords": "Chargement...",
+                    "processing": "Traitement...",
+                    "select": {
+                        "rows": {
+                            "_": "%d lignes sélectionnées",
+                            "1": "1 ligne sélectionnée"
+                        },
+                        "cells": {
+                            "1": "1 cellule sélectionnée",
+                            "_": "%d cellules sélectionnées"
+                        },
+                        "columns": {
+                            "1": "1 colonne sélectionnée",
+                            "_": "%d colonnes sélectionnées"
+                        }
+                    },
+                    "autoFill": {
+                        "cancel": "Annuler",
+                        "fill": "Remplir toutes les cellules avec <i>%d<\/i>",
+                        "fillHorizontal": "Remplir les cellules horizontalement",
+                        "fillVertical": "Remplir les cellules verticalement"
+                    },
+                    "searchBuilder": {
+                        "conditions": {
+                            "date": {
+                                "after": "Après le",
+                                "before": "Avant le",
+                                "between": "Entre",
+                                "empty": "Vide",
+                                "not": "Différent de",
+                                "notBetween": "Pas entre",
+                                "notEmpty": "Non vide",
+                                "equals": "Égal à"
+                            },
+                            "number": {
+                                "between": "Entre",
+                                "empty": "Vide",
+                                "gt": "Supérieur à",
+                                "gte": "Supérieur ou égal à",
+                                "lt": "Inférieur à",
+                                "lte": "Inférieur ou égal à",
+                                "not": "Différent de",
+                                "notBetween": "Pas entre",
+                                "notEmpty": "Non vide",
+                                "equals": "Égal à"
+                            },
+                            "string": {
+                                "contains": "Contient",
+                                "empty": "Vide",
+                                "endsWith": "Se termine par",
+                                "not": "Différent de",
+                                "notEmpty": "Non vide",
+                                "startsWith": "Commence par",
+                                "equals": "Égal à",
+                                "notContains": "Ne contient pas",
+                                "notEndsWith": "Ne termine pas par",
+                                "notStartsWith": "Ne commence pas par"
+                            },
+                            "array": {
+                                "empty": "Vide",
+                                "contains": "Contient",
+                                "not": "Différent de",
+                                "notEmpty": "Non vide",
+                                "without": "Sans",
+                                "equals": "Égal à"
+                            }
+                        },
+                        "add": "Ajouter une condition",
+                        "button": {
+                            "0": "Recherche avancée",
+                            "_": "Recherche avancée (%d)"
+                        },
+                        "clearAll": "Effacer tout",
+                        "condition": "Condition",
+                        "data": "Donnée",
+                        "deleteTitle": "Supprimer la règle de filtrage",
+                        "logicAnd": "Et",
+                        "logicOr": "Ou",
+                        "title": {
+                            "0": "Recherche avancée",
+                            "_": "Recherche avancée (%d)"
+                        },
+                        "value": "Valeur",
+                        "leftTitle": "Désindenter le critère",
+                        "rightTitle": "Indenter le critère"
+                    },
+                    "searchPanes": {
+                        "clearMessage": "Effacer tout",
+                        "count": "{total}",
+                        "title": "Filtres actifs - %d",
+                        "collapse": {
+                            "0": "Volet de recherche",
+                            "_": "Volet de recherche (%d)"
+                        },
+                        "countFiltered": "{shown} ({total})",
+                        "emptyPanes": "Pas de volet de recherche",
+                        "loadMessage": "Chargement du volet de recherche...",
+                        "collapseMessage": "Réduire tout",
+                        "showMessage": "Montrer tout"
+                    },
+                    "buttons": {
+                        "collection": "Collection",
+                        "colvis": "Visibilité colonnes",
+                        "colvisRestore": "Rétablir visibilité",
+                        "copy": "Copier",
+                        "copySuccess": {
+                            "1": "1 ligne copiée dans le presse-papier",
+                            "_": "%d lignes copiées dans le presse-papier"
+                        },
+                        "copyTitle": "Copier dans le presse-papier",
+                        "csv": "CSV",
+                        "excel": "Excel",
+                        "pageLength": {
+                            "-1": "Afficher toutes les lignes",
+                            "_": "Afficher %d lignes",
+                            "1": "Afficher 1 ligne"
+                        },
+                        "pdf": "PDF",
+                        "print": "Imprimer",
+                        "copyKeys": "Appuyez sur ctrl ou u2318 + C pour copier les données du tableau dans votre presse-papier.",
+                        "createState": "Créer un état",
+                        "removeAllStates": "Supprimer tous les états",
+                        "removeState": "Supprimer",
+                        "renameState": "Renommer",
+                        "savedStates": "États sauvegardés",
+                        "stateRestore": "État %d",
+                        "updateState": "Mettre à jour"
+                    },
+                    "decimal": ",",
+                    "datetime": {
+                        "previous": "Précédent",
+                        "next": "Suivant",
+                        "hours": "Heures",
+                        "minutes": "Minutes",
+                        "seconds": "Secondes",
+                        "unknown": "-",
+                        "amPm": [
+                            "am",
+                            "pm"
+                        ],
+                        "months": {
+                            "0": "Janvier",
+                            "2": "Mars",
+                            "3": "Avril",
+                            "4": "Mai",
+                            "5": "Juin",
+                            "6": "Juillet",
+                            "8": "Septembre",
+                            "9": "Octobre",
+                            "10": "Novembre",
+                            "1": "Février",
+                            "11": "Décembre",
+                            "7": "Août"
+                        },
+                        "weekdays": [
+                            "Dim",
+                            "Lun",
+                            "Mar",
+                            "Mer",
+                            "Jeu",
+                            "Ven",
+                            "Sam"
+                        ]
+                    },
+                    "editor": {
+                        "close": "Fermer",
+                        "create": {
+                            "title": "Créer une nouvelle entrée",
+                            "button": "Nouveau",
+                            "submit": "Créer"
+                        },
+                        "edit": {
+                            "button": "Editer",
+                            "title": "Editer Entrée",
+                            "submit": "Mettre à jour"
+                        },
+                        "remove": {
+                            "button": "Supprimer",
+                            "title": "Supprimer",
+                            "submit": "Supprimer",
+                            "confirm": {
+                                "_": "Êtes-vous sûr de vouloir supprimer %d lignes ?",
+                                "1": "Êtes-vous sûr de vouloir supprimer 1 ligne ?"
+                            }
+                        },
+                        "multi": {
+                            "title": "Valeurs multiples",
+                            "info": "Les éléments sélectionnés contiennent différentes valeurs pour cette entrée. Pour modifier et définir tous les éléments de cette entrée à la même valeur, cliquez ou tapez ici, sinon ils conserveront leurs valeurs individuelles.",
+                            "restore": "Annuler les modifications",
+                            "noMulti": "Ce champ peut être modifié individuellement, mais ne fait pas partie d'un groupe. "
+                        },
+                        "error": {
+                            "system": "Une erreur système s'est produite (<a target=\"\\\" rel=\"nofollow\" href=\"\\\">Plus d'information<\/a>)."
+                        }
+                    },
+                    "stateRestore": {
+                        "removeSubmit": "Supprimer",
+                        "creationModal": {
+                            "button": "Créer",
+                            "order": "Tri",
+                            "paging": "Pagination",
+                            "scroller": "Position du défilement",
+                            "search": "Recherche",
+                            "select": "Sélection",
+                            "columns": {
+                                "search": "Recherche par colonne",
+                                "visible": "Visibilité des colonnes"
+                            },
+                            "name": "Nom :",
+                            "searchBuilder": "Recherche avancée",
+                            "title": "Créer un nouvel état",
+                            "toggleLabel": "Inclus :"
+                        },
+                        "renameButton": "Renommer",
+                        "duplicateError": "Il existe déjà un état avec ce nom.",
+                        "emptyError": "Le nom ne peut pas être vide.",
+                        "emptyStates": "Aucun état sauvegardé",
+                        "removeConfirm": "Voulez vous vraiment supprimer %s ?",
+                        "removeError": "Échec de la suppression de l'état.",
+                        "removeJoiner": "et",
+                        "removeTitle": "Supprimer l'état",
+                        "renameLabel": "Nouveau nom pour %s :",
+                        "renameTitle": "Renommer l'état"
+                    },
+                    "info": "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
+                    "infoEmpty": "Affichage de 0 à 0 sur 0 entrées",
+                    "infoFiltered": "(filtrées depuis un total de _MAX_ entrées)",
+                    "lengthMenu": "Afficher _MENU_ entrées",
+                    "paginate": {
+                        "first": "Première",
+                        "last": "Dernière",
+                        "next": "Suivante",
+                        "previous": "Précédente"
+                    },
+                    "zeroRecords": "Aucune entrée correspondante trouvée",
+                    "aria": {
+                        "sortAscending": " : activer pour trier la colonne par ordre croissant",
+                        "sortDescending": " : activer pour trier la colonne par ordre décroissant"
+                    },
+                    "infoThousands": " ",
+                    "search": "Rechercher :",
+                    "thousands": " "
+                }  ,
+            });
+        
+            function fechar() {
+                $('#modal').modal('hide')
+                $('#modal').find('.modal-header').html('')
+            }
+        
+            function closeForm() {
+                $('#modal-form').modal('hide')
+                $('#modal-form').find('form input[name=id]').remove()
+                $('#modal-form').find('form').off('submit', ajouterPersonne)
+                $('#modal-form').find('form').off('submit', editPerson)
+                $('#modal-form').find('form').trigger("reset")
+                Array.from(document.querySelectorAll(".form-control")).map((dev) => {
+                   if (dev.classList.contains('is-invalid') == true) {
+                        dev.classList.remove('is-invalid')
+                    }
+                })
+            }
+        
+            function ajouter() {
+                $('#modal-form').find('.modal-header').html('ajouter cni')
+                $('#modal-form').find('form button').html('ajouter')
+                $('#modal-form').find('form').on('submit', ajouterPersonne)
+                $('#modal-form').modal('show')
+                $(".modal-backdrop").hide()
+            }
+        
+            function editer(id) {
+                const cpf = $(`#row_${id}`).find('td:eq(1)').html()
+                const nome = $(`#row_${id}`).find('td:eq(2)').html()
+        
+                $('#modal-form').find('.modal-header').html('editer cni')
+                $('#modal-form').find('form').prepend('<input type="hidden" name="id">')
+                $('#modal-form').find('form input[name=id]').val(id)
+                $('#modal-form').find('form input[name="cpf"]').val(cpf)
+                $('#modal-form').find('form input[name="nome"]').val(nome)
+                $('#modal-form').find('form button').html('SALVAR')
+                $('#modal-form').find('form').on('submit', editPerson)
+                $('#modal-form').modal('show')
+                $(".modal-backdrop").hide()
+            }
+        
+            function supprimer(id) {
+                $('#modal').find('.modal-header').html(`<h5>Realmente deseja supprimer a tarefa de id "${id}" ?</h5>`)
+                $('#modal').find('.modal-footer').html(`<button class="btn btn-sm btn-success" onclick="supprimerPersonne(${id})">SIM</button> <button class="btn btn-sm btn-danger" onclick="fechar()">NÃO</button>`)
+                $('#modal').modal('show')
+                $(".modal-backdrop").hide()
+            }
+        
+            function ajouterPersonne(e) {
+                e.preventDefault()
+                let data = new FormData(document.getElementById("form"))
+                console.log(data);
+                var image_blob_1 = ''
+                var image_blob_2 = ''
+                var image_blob_3 = ''
+                var image_blob_4 = ''
+                if (image_blob_1) 
+                {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        image_blob_1 = e.target.result.split(',')[1];
+                    };
+                    reader.readAsDataURL(image_blob_1);
+                } 
+                if (image_blob_2) 
+                {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        image_blob_2 = e.target.result.split(',')[1];
+                    };
+                    reader.readAsDataURL(image_blob_2);
+                } 
+                if (image_blob_3) 
+                {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        image_blob_3 = e.target.result.split(',')[1];
+                    };
+                    reader.readAsDataURL(image_blob_3);
+                } 
+                if (image_blob_4) 
+                {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        image_blob_4 = e.target.result.split(',')[1];
+                    };
+                    reader.readAsDataURL(image_blob_4);
+                } 
+                console.log(image_blob_1, image_blob_2, image_blob_3, image_blob_4);
+                $.ajax ({
+                    'method': 'POST',
+                    'url': `${location.host}/cni/create`,
+                    'data': {
+                            'carte_id':data.get("carte_id"), 
+                            'nom':data.get("nom"),
+                            'prenom':data.get("prenom"),
+                            'date_naissance':data.get("date_naissance"),
+                            'lieu_naissance':data.get("lieu_naissance"),
+                            'profession':data.get("profession"),
+                            'image_blob_1':image_blob_1,
+                            'image_blob_2':image_blob_2,
+                            'image_blob_3':image_blob_3,
+                            'image_blob_4':image_blob_4,
+                        },
+                    'success': function(resposta) {
+                        if (resposta.status === 'success') 
+                        {
+                            $('#mensagem').html(`
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            ${resposta.mensagem}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            `)
+                            tabela.ajax.reload()
+                        } 
+                        else if (resposta.status === 'error') 
+                        {
+                            $('#mensagem').html(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            ${resposta.mensagem}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            `)
+                        }
+                        closeForm()
+                    }
+                });
+            }
+        
+            function editPerson(e) {
+                e.preventDefault()
+                let data = new FormData(document.getElementById("form"))
+        
+                if (document.querySelector("#cpf").classList.contains('is-invalid') === false && document.querySelector("#nome").classList.contains('is-invalid') === false) {
+                    $.ajax ({
+                        'method': 'POST',
+                        'url': `${location.host}pessoas/update`,
+                        'data': {'id':data.get('id'), 'cpf':data.get('cpf'), 'nome':data.get('nome')},
+                          success: function(resposta) {
+                            if (resposta.status === 'success') {
+                              tabela.cell($(`#row_${data.get('id')}`), 0).data(data.get('id')).draw(false)
+                              tabela.cell($(`#row_${data.get('id')}`), 1).data(data.get('cpf')).draw(false)
+                              tabela.cell($(`#row_${data.get('id')}`), 2).data(data.get('nome')).draw(false)
+                              $('#mensagem').html(`
+                              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                ${resposta.mensagem}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              `)
+                            } else if (resposta.status === 'error') {
+                              $('#mensagem').html(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                ${resposta.mensagem}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              `)
+                            }
+                            closeForm()
+                          }
+                    })
+                }
+            }
+        
+            function supprimerPersonne(id) {
+                $.ajax({
+                    method: 'POST',
+                    url: `${location.host}/cnis/delete`,
+                    data: {'id': id},
+                    success: function(resposta) {
+                        if (resposta.status == 'success') {
+                          $('#mensagem').html(`<div class="alert alert-success alert-dismissible fade show" role="alert">
+                            ${resposta.mensagem}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          `)
+                          tabela.row(`#row_${id}`).remove().draw(false);
+                        }
+                        fechar()
+                    }
+                })
+            }
+        
+        </script>
+    </body>
+</html>
